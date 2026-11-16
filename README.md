@@ -4,25 +4,7 @@ A Docker Compose order system built from scratch to practice operating Grafana, 
 
 ## Architecture
 
-```text
-traffic -> Order API -> PostgreSQL orders + outbox
-                            |
-                            v
-                     outbox publisher -> Kafka orders.placed
-                                           |             |
-                                           v             v
-                                      dispatcher     analytics
-                                           |
-                                           v
-                                      RabbitMQ fulfillment
-                                           |
-                                           v
-                                     fulfillment worker -> PostgreSQL
-
-application OTLP -> OpenTelemetry Collector -> Prometheus / Loki / Tempo
-RabbitMQ, Kafka exporter, Blackbox probe -> Prometheus
-Grafana -> Prometheus, Loki, Tempo, read-only PostgreSQL
-```
+![Architecture diagram showing the order processing and observability flows](docs/architecture.png)
 
 The order and its outbox event commit together. Publishing and delivery are **at least once**; stable event IDs and a `processed_events` table make fulfillment duplicate-safe. The Kafka dispatcher waits for RabbitMQ publisher confirmation before committing its Kafka offset. Kafka retains order facts; RabbitMQ carries fulfillment tasks. The analytics consumer reads Kafka independently.
 

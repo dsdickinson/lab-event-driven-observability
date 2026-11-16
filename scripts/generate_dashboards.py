@@ -36,7 +36,7 @@ dashboards = [
     dashboard("lab-api", "01 Service and API Health", "PromQL service and HTTP metrics", [
         panel("Orders per second (PromQL)", "prometheus", "sum(rate(lab_http_requests_total{route=\"/orders\"}[5m]))", 0, 0, unit="reqps"),
         panel("API errors per second (PromQL)", "prometheus", "sum(rate(lab_http_requests_total{route=\"/orders\",result!=\"created\"}[5m])) or vector(0)", 12, 0, unit="reqps"),
-        panel("p95 order API latency (PromQL)", "prometheus", "histogram_quantile(0.95, sum by (le) (rate(lab_http_duration_seconds_bucket[5m])))", 0, 8, unit="s"),
+        panel("p95 order API latency (PromQL)", "prometheus", "histogram_quantile(0.95, sum by (le) (rate(lab_http_duration_seconds_bucket{route=\"/orders\"}[5m])))", 0, 8, unit="s"),
         panel("API probe success (PromQL)", "prometheus", "probe_success{job=\"blackbox\"}", 12, 8),
         panel("Recent API logs (LogQL)", "loki", "{service_name=\"order-api\"}", 0, 16, kind="logs", width=24),
     ]),

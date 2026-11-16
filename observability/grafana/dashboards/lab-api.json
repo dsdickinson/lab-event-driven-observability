@@ -95,7 +95,7 @@
             "type": "prometheus",
             "uid": "prometheus"
           },
-          "expr": "histogram_quantile(0.95, sum by (le) (rate(lab_http_duration_seconds_bucket[5m])))",
+          "expr": "histogram_quantile(0.95, sum by (le) (rate(lab_http_duration_seconds_bucket{route=\"/orders\"}[5m])))",
           "legendFormat": "{{service_name}} {{result}} {{queue}} {{consumergroup}} {{job}}"
         }
       ],
