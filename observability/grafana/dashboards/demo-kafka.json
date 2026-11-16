@@ -1,13 +1,13 @@
 {
-  "uid": "lab-pipeline",
-  "title": "05 Telemetry Pipeline",
-  "description": "Scrape, probe, and backend availability",
+  "uid": "demo-kafka",
+  "title": "04 Kafka Events",
+  "description": "Topic progress and consumer lag",
   "schemaVersion": 41,
   "version": 1,
   "refresh": "10s",
   "timezone": "browser",
   "tags": [
-    "local-lab"
+    "local-demo"
   ],
   "time": {
     "from": "now-1h",
@@ -16,7 +16,7 @@
   "panels": [
     {
       "id": 1,
-      "title": "Prometheus target health (PromQL)",
+      "title": "Order topic offset (PromQL)",
       "type": "timeseries",
       "datasource": {
         "type": "prometheus",
@@ -29,7 +29,7 @@
             "type": "prometheus",
             "uid": "prometheus"
           },
-          "expr": "up",
+          "expr": "sum(kafka_topic_partition_current_offset{topic=\"orders.placed\"})",
           "legendFormat": "{{service_name}} {{result}} {{queue}} {{consumergroup}} {{job}}"
         }
       ],
@@ -49,7 +49,7 @@
     },
     {
       "id": 13,
-      "title": "Collector accepted spans (PromQL)",
+      "title": "Consumer lag (PromQL)",
       "type": "timeseries",
       "datasource": {
         "type": "prometheus",
@@ -62,7 +62,7 @@
             "type": "prometheus",
             "uid": "prometheus"
           },
-          "expr": "sum(rate(otelcol_receiver_accepted_spans_total[5m]))",
+          "expr": "kafka_consumergroup_lag_sum{topic=\"orders.placed\"}",
           "legendFormat": "{{service_name}} {{result}} {{queue}} {{consumergroup}} {{job}}"
         }
       ],
@@ -74,7 +74,7 @@
       },
       "fieldConfig": {
         "defaults": {
-          "unit": "ops"
+          "unit": "short"
         },
         "overrides": []
       },
@@ -82,7 +82,7 @@
     },
     {
       "id": 81,
-      "title": "Collector refused records (PromQL)",
+      "title": "Outbox publish rate (PromQL)",
       "type": "timeseries",
       "datasource": {
         "type": "prometheus",
@@ -95,7 +95,7 @@
             "type": "prometheus",
             "uid": "prometheus"
           },
-          "expr": "(sum(rate(otelcol_receiver_refused_spans_total[5m])) or vector(0)) + (sum(rate(otelcol_receiver_refused_log_records_total[5m])) or vector(0))",
+          "expr": "sum(rate(demo_outbox_published_total[5m]))",
           "legendFormat": "{{service_name}} {{result}} {{queue}} {{consumergroup}} {{job}}"
         }
       ],
@@ -115,7 +115,7 @@
     },
     {
       "id": 93,
-      "title": "Blackbox duration (PromQL)",
+      "title": "Analytics consumption rate (PromQL)",
       "type": "timeseries",
       "datasource": {
         "type": "prometheus",
@@ -128,79 +128,13 @@
             "type": "prometheus",
             "uid": "prometheus"
           },
-          "expr": "probe_duration_seconds{job=\"blackbox\"}",
+          "expr": "sum(rate(demo_analytics_orders_total[5m]))",
           "legendFormat": "{{service_name}} {{result}} {{queue}} {{consumergroup}} {{job}}"
         }
       ],
       "gridPos": {
         "x": 12,
         "y": 8,
-        "w": 12,
-        "h": 8
-      },
-      "fieldConfig": {
-        "defaults": {
-          "unit": "s"
-        },
-        "overrides": []
-      },
-      "options": {}
-    },
-    {
-      "id": 161,
-      "title": "Loki lines received per second (PromQL)",
-      "type": "timeseries",
-      "datasource": {
-        "type": "prometheus",
-        "uid": "prometheus"
-      },
-      "targets": [
-        {
-          "refId": "A",
-          "datasource": {
-            "type": "prometheus",
-            "uid": "prometheus"
-          },
-          "expr": "sum(rate(loki_distributor_lines_received_total[5m]))",
-          "legendFormat": "{{service_name}} {{result}} {{queue}} {{consumergroup}} {{job}}"
-        }
-      ],
-      "gridPos": {
-        "x": 0,
-        "y": 16,
-        "w": 12,
-        "h": 8
-      },
-      "fieldConfig": {
-        "defaults": {
-          "unit": "ops"
-        },
-        "overrides": []
-      },
-      "options": {}
-    },
-    {
-      "id": 173,
-      "title": "Tempo spans received per second (PromQL)",
-      "type": "timeseries",
-      "datasource": {
-        "type": "prometheus",
-        "uid": "prometheus"
-      },
-      "targets": [
-        {
-          "refId": "A",
-          "datasource": {
-            "type": "prometheus",
-            "uid": "prometheus"
-          },
-          "expr": "sum(rate(tempo_distributor_spans_received_total[5m]))",
-          "legendFormat": "{{service_name}} {{result}} {{queue}} {{consumergroup}} {{job}}"
-        }
-      ],
-      "gridPos": {
-        "x": 12,
-        "y": 16,
         "w": 12,
         "h": 8
       },

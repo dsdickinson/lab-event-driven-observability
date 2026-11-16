@@ -1,6 +1,6 @@
 ## Context
 
-The repository has no application code. The first release is a local, job-portfolio observability lab: a believable order workflow, two brokers with different roles, and dashboards built from its real telemetry. Docker Compose is the deployment target. All runtime dependencies stay on the Compose network; downloading images and the optional Olist dataset is a setup action, not a runtime dependency.
+The repository has no application code. The first release is a local, job-portfolio observability demo: a believable order workflow, two brokers with different roles, and dashboards built from its real telemetry. Docker Compose is the deployment target. All runtime dependencies stay on the Compose network; downloading images and the optional Olist dataset is a setup action, not a runtime dependency.
 
 ## Goals / Non-Goals
 

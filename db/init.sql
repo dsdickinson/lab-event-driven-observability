@@ -33,6 +33,6 @@ CREATE TABLE IF NOT EXISTS analytics_events (
   processed_at timestamptz NOT NULL DEFAULT now()
 );
 CREATE USER grafana_read WITH PASSWORD 'grafana_read';
-GRANT CONNECT ON DATABASE lab TO grafana_read;
+GRANT CONNECT ON DATABASE demo TO grafana_read;
 GRANT USAGE ON SCHEMA public TO grafana_read;
 GRANT SELECT ON ALL TABLES IN SCHEMA public TO grafana_read;

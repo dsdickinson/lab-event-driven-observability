@@ -46,7 +46,7 @@ def main():
         return row and row[0] and row[1]
 
     wait_until("Kafka and analytics processed", delivered)
-    wait_until("application metric", lambda: prom("lab_orders_created_total"))
+    wait_until("application metric", lambda: prom("demo_orders_created_total"))
     wait_until("RabbitMQ metric", lambda: prom("rabbitmq_queue_messages_ready"))
     wait_until("Kafka lag metric", lambda: prom("kafka_consumergroup_lag_sum"))
     wait_until("blackbox probe", lambda: prom("probe_success{job=\"blackbox\"}"))

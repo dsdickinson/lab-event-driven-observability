@@ -8,7 +8,7 @@ from app.common import KAFKA, TOPIC, carrier_headers, db, ensure_topic, payload,
 from app.telemetry import setup
 
 tracer, meter = setup("outbox-publisher")
-published = meter.create_counter("lab_outbox_published", unit="1")
+published = meter.create_counter("demo_outbox_published", unit="1")
 
 
 def main():

@@ -1,12 +1,12 @@
-name: local-observability-lab
+name: local-observability-demo
 
 x-app: &app
   build: .
   restart: unless-stopped
   environment: &app-env
-    DATABASE_URL: postgresql://lab:lab@postgres:5432/lab
+    DATABASE_URL: postgresql://demo:demo@postgres:5432/demo
     KAFKA_BOOTSTRAP_SERVERS: kafka:9092
-    RABBITMQ_URL: amqp://lab:lab@rabbitmq:5672/%2F
+    RABBITMQ_URL: amqp://demo:demo@rabbitmq:5672/%2F
     OTEL_EXPORTER_OTLP_ENDPOINT: http://otel-collector:4318
   depends_on:
     postgres:
@@ -22,14 +22,14 @@ services:
   postgres:
     image: postgres:17.5
     environment:
-      POSTGRES_DB: lab
-      POSTGRES_USER: lab
-      POSTGRES_PASSWORD: lab
+      POSTGRES_DB: demo
+      POSTGRES_USER: demo
+      POSTGRES_PASSWORD: demo
     volumes:
       - postgres-data:/var/lib/postgresql/data
       - ./db/init.sql:/docker-entrypoint-initdb.d/01-init.sql:ro
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U lab -d lab"]
+      test: ["CMD-SHELL", "pg_isready -U demo -d demo"]
       interval: 5s
       timeout: 3s
       retries: 20
@@ -59,8 +59,8 @@ services:
     image: rabbitmq:4.1-management
     command: ["sh", "-c", "rabbitmq-plugins enable --offline rabbitmq_prometheus && rabbitmq-server"]
     environment:
-      RABBITMQ_DEFAULT_USER: lab
-      RABBITMQ_DEFAULT_PASS: lab
+      RABBITMQ_DEFAULT_USER: demo
+      RABBITMQ_DEFAULT_PASS: demo
     volumes:
       - rabbitmq-data:/var/lib/rabbitmq
     ports:

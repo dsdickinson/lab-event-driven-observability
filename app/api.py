@@ -10,10 +10,10 @@ from app.common import db, new_id, wait_for_database, rabbit_headers
 from app.telemetry import setup
 
 tracer, meter = setup("order-api")
-requests_counter = meter.create_counter("lab_http_requests", unit="1")
-orders_counter = meter.create_counter("lab_orders_created", unit="1")
-request_duration = meter.create_histogram("lab_http_duration", unit="s")
-app = FastAPI(title="Local Observability Lab")
+requests_counter = meter.create_counter("demo_http_requests", unit="1")
+orders_counter = meter.create_counter("demo_orders_created", unit="1")
+request_duration = meter.create_histogram("demo_http_duration", unit="s")
+app = FastAPI(title="Local Observability Demo")
 
 
 class OrderInput(BaseModel):

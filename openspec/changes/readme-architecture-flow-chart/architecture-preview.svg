@@ -1,5 +1,5 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="1440" height="920" viewBox="0 0 1440 920" role="img" aria-labelledby="title desc">
-  <title id="title">Local Observability Lab architecture</title>
+  <title id="title">Local Observability Demo architecture</title>
   <desc id="desc">Orders flow from generated traffic through the API, PostgreSQL outbox, Kafka, dispatcher, RabbitMQ, and fulfillment worker. Kafka also feeds independent analytics. Application telemetry goes through the OpenTelemetry Collector to Prometheus, Loki, and Tempo. Prometheus scrapes infrastructure. Grafana queries those data sources and read-only PostgreSQL.</desc>
   <defs>
     <marker id="arrow" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto"><path d="M0 0L10 5L0 10Z" fill="#64748b"/></marker>
@@ -13,7 +13,7 @@
     </style>
   </defs>
   <rect width="1440" height="920" fill="#f8fafc"/>
-  <text x="64" y="62" class="title">Local Observability Lab</text>
+  <text x="64" y="62" class="title">Local Observability Demo</text>
   <text x="64" y="91" class="subtitle">Order processing and the signals used to observe it</text>
   <rect x="44" y="120" width="1352" height="430" rx="18" fill="#fff" stroke="#e2e8f0"/>
   <text x="72" y="157" class="lane">ORDER PROCESSING</text>

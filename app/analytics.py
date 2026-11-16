@@ -7,7 +7,7 @@ from app.common import KAFKA, TOPIC, context_from_headers, db, ensure_topic, wai
 from app.telemetry import setup
 
 tracer, meter = setup("analytics-consumer")
-count = meter.create_counter("lab_analytics_orders", unit="1")
+count = meter.create_counter("demo_analytics_orders", unit="1")
 
 
 def main():

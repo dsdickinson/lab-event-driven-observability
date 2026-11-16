@@ -9,7 +9,7 @@ from app.common import KAFKA, RABBIT, TOPIC, context_from_headers, ensure_topic,
 from app.telemetry import setup
 
 tracer, meter = setup("order-dispatcher")
-dispatched = meter.create_counter("lab_tasks_dispatched", unit="1")
+dispatched = meter.create_counter("demo_tasks_dispatched", unit="1")
 
 
 def rabbit_connection():

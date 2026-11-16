@@ -1,13 +1,13 @@
 {
-  "uid": "lab-kafka",
-  "title": "04 Kafka Events",
-  "description": "Topic progress and consumer lag",
+  "uid": "demo-rabbit",
+  "title": "03 RabbitMQ Fulfillment",
+  "description": "Queue and worker health",
   "schemaVersion": 41,
   "version": 1,
   "refresh": "10s",
   "timezone": "browser",
   "tags": [
-    "local-lab"
+    "local-demo"
   ],
   "time": {
     "from": "now-1h",
@@ -16,7 +16,7 @@
   "panels": [
     {
       "id": 1,
-      "title": "Order topic offset (PromQL)",
+      "title": "Ready tasks (PromQL)",
       "type": "timeseries",
       "datasource": {
         "type": "prometheus",
@@ -29,7 +29,7 @@
             "type": "prometheus",
             "uid": "prometheus"
           },
-          "expr": "sum(kafka_topic_partition_current_offset{topic=\"orders.placed\"})",
+          "expr": "rabbitmq_queue_messages_ready{queue=~\"fulfillment.*\"}",
           "legendFormat": "{{service_name}} {{result}} {{queue}} {{consumergroup}} {{job}}"
         }
       ],
@@ -49,7 +49,7 @@
     },
     {
       "id": 13,
-      "title": "Consumer lag (PromQL)",
+      "title": "Unacknowledged tasks (PromQL)",
       "type": "timeseries",
       "datasource": {
         "type": "prometheus",
@@ -62,7 +62,7 @@
             "type": "prometheus",
             "uid": "prometheus"
           },
-          "expr": "kafka_consumergroup_lag_sum{topic=\"orders.placed\"}",
+          "expr": "rabbitmq_queue_messages_unacked{queue=\"fulfillment\"}",
           "legendFormat": "{{service_name}} {{result}} {{queue}} {{consumergroup}} {{job}}"
         }
       ],
@@ -82,7 +82,7 @@
     },
     {
       "id": 81,
-      "title": "Outbox publish rate (PromQL)",
+      "title": "Fulfilled orders per second (PromQL)",
       "type": "timeseries",
       "datasource": {
         "type": "prometheus",
@@ -95,7 +95,7 @@
             "type": "prometheus",
             "uid": "prometheus"
           },
-          "expr": "sum(rate(lab_outbox_published_total[5m]))",
+          "expr": "sum(rate(demo_orders_fulfilled_total[5m]))",
           "legendFormat": "{{service_name}} {{result}} {{queue}} {{consumergroup}} {{job}}"
         }
       ],
@@ -115,7 +115,7 @@
     },
     {
       "id": 93,
-      "title": "Analytics consumption rate (PromQL)",
+      "title": "Fulfillment failures per second (PromQL)",
       "type": "timeseries",
       "datasource": {
         "type": "prometheus",
@@ -128,7 +128,7 @@
             "type": "prometheus",
             "uid": "prometheus"
           },
-          "expr": "sum(rate(lab_analytics_orders_total[5m]))",
+          "expr": "sum(rate(demo_fulfillment_failures_total[5m])) or vector(0)",
           "legendFormat": "{{service_name}} {{result}} {{queue}} {{consumergroup}} {{job}}"
         }
       ],

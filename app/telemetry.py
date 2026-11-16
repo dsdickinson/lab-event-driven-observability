@@ -35,7 +35,7 @@ def setup(service):
     )
     views = [
         View(
-            instrument_name="lab_http_duration",
+            instrument_name="demo_http_duration",
             aggregation=ExplicitBucketHistogramAggregation(
                 boundaries=[
                     0.05, 0.1, 0.25, 0.5, 0.75,

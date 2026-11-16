@@ -1,4 +1,4 @@
-# Local Observability Lab Implementation Plan
+# Local Observability Demo Implementation Plan
 
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
@@ -8,7 +8,7 @@
 
 **Tech Stack:** Python 3.12, FastAPI, psycopg, confluent-kafka, pika, OpenTelemetry Python SDK, Docker Compose, PostgreSQL, Kafka, RabbitMQ, Prometheus, Loki, Tempo, Grafana.
 
-**Spec:** `openspec/changes/local-observability-lab/design.md` and `openspec/changes/local-observability-lab/specs/`
+**Spec:** `openspec/changes/local-observability-demo/design.md` and `openspec/changes/local-observability-demo/specs/`
 
 ## Global Constraints
 

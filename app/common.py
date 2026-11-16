@@ -7,9 +7,9 @@ import psycopg
 from confluent_kafka.admin import AdminClient, NewTopic
 from opentelemetry import propagate, trace
 
-DB_DSN = os.getenv("DATABASE_URL", "postgresql://lab:lab@postgres:5432/lab")
+DB_DSN = os.getenv("DATABASE_URL", "postgresql://demo:demo@postgres:5432/demo")
 KAFKA = os.getenv("KAFKA_BOOTSTRAP_SERVERS", "kafka:9092")
-RABBIT = os.getenv("RABBITMQ_URL", "amqp://lab:lab@rabbitmq:5672/%2F")
+RABBIT = os.getenv("RABBITMQ_URL", "amqp://demo:demo@rabbitmq:5672/%2F")
 TOPIC = "orders.placed"
 
 

@@ -38,7 +38,7 @@ datasources:
     secureJsonData:
       password: grafana_read
     jsonData:
-      database: lab
+      database: demo
       sslmode: disable
       postgresVersion: 1700
       timescaledb: false

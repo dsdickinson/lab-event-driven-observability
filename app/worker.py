@@ -9,9 +9,9 @@ from app.common import RABBIT, context_from_rabbit, db, wait_for_database
 from app.telemetry import setup
 
 tracer, meter = setup("fulfillment-worker")
-fulfilled = meter.create_counter("lab_orders_fulfilled", unit="1")
-failed = meter.create_counter("lab_fulfillment_failures", unit="1")
-duration = meter.create_histogram("lab_fulfillment_duration", unit="s")
+fulfilled = meter.create_counter("demo_orders_fulfilled", unit="1")
+failed = meter.create_counter("demo_fulfillment_failures", unit="1")
+duration = meter.create_histogram("demo_fulfillment_duration", unit="s")
 
 
 def apply_fulfillment(event_id, order_id):

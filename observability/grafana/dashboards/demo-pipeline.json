@@ -1,13 +1,13 @@
 {
-  "uid": "lab-orders",
-  "title": "02 Order Flow and SQL",
-  "description": "Compare Prometheus operations with PostgreSQL business records",
+  "uid": "demo-pipeline",
+  "title": "05 Telemetry Pipeline",
+  "description": "Scrape, probe, and backend availability",
   "schemaVersion": 41,
   "version": 1,
   "refresh": "10s",
   "timezone": "browser",
   "tags": [
-    "local-lab"
+    "local-demo"
   ],
   "time": {
     "from": "now-1h",
@@ -16,7 +16,7 @@
   "panels": [
     {
       "id": 1,
-      "title": "Orders created per second (PromQL)",
+      "title": "Prometheus target health (PromQL)",
       "type": "timeseries",
       "datasource": {
         "type": "prometheus",
@@ -29,12 +29,45 @@
             "type": "prometheus",
             "uid": "prometheus"
           },
-          "expr": "sum(rate(lab_orders_created_total[5m]))",
+          "expr": "up",
           "legendFormat": "{{service_name}} {{result}} {{queue}} {{consumergroup}} {{job}}"
         }
       ],
       "gridPos": {
         "x": 0,
+        "y": 0,
+        "w": 12,
+        "h": 8
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "short"
+        },
+        "overrides": []
+      },
+      "options": {}
+    },
+    {
+      "id": 13,
+      "title": "Collector accepted spans (PromQL)",
+      "type": "timeseries",
+      "datasource": {
+        "type": "prometheus",
+        "uid": "prometheus"
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prometheus"
+          },
+          "expr": "sum(rate(otelcol_receiver_accepted_spans_total[5m]))",
+          "legendFormat": "{{service_name}} {{result}} {{queue}} {{consumergroup}} {{job}}"
+        }
+      ],
+      "gridPos": {
+        "x": 12,
         "y": 0,
         "w": 12,
         "h": 8
@@ -48,59 +81,22 @@
       "options": {}
     },
     {
-      "id": 13,
-      "title": "Pending outbox events (SQL)",
-      "type": "table",
-      "datasource": {
-        "type": "postgres",
-        "uid": "postgres"
-      },
-      "targets": [
-        {
-          "refId": "A",
-          "datasource": {
-            "type": "postgres",
-            "uid": "postgres"
-          },
-          "rawSql": "SELECT count(*) AS pending_events FROM outbox WHERE published_at IS NULL",
-          "format": "table",
-          "rawQuery": true
-        }
-      ],
-      "gridPos": {
-        "x": 12,
-        "y": 0,
-        "w": 12,
-        "h": 8
-      },
-      "fieldConfig": {
-        "defaults": {
-          "unit": "short"
-        },
-        "overrides": []
-      },
-      "options": {
-        "showHeader": true
-      }
-    },
-    {
       "id": 81,
-      "title": "Orders by status (SQL)",
-      "type": "table",
+      "title": "Collector refused records (PromQL)",
+      "type": "timeseries",
       "datasource": {
-        "type": "postgres",
-        "uid": "postgres"
+        "type": "prometheus",
+        "uid": "prometheus"
       },
       "targets": [
         {
           "refId": "A",
           "datasource": {
-            "type": "postgres",
-            "uid": "postgres"
+            "type": "prometheus",
+            "uid": "prometheus"
           },
-          "rawSql": "SELECT status, count(*) AS orders FROM orders GROUP BY status ORDER BY status",
-          "format": "table",
-          "rawQuery": true
+          "expr": "(sum(rate(otelcol_receiver_refused_spans_total[5m])) or vector(0)) + (sum(rate(otelcol_receiver_refused_log_records_total[5m])) or vector(0))",
+          "legendFormat": "{{service_name}} {{result}} {{queue}} {{consumergroup}} {{job}}"
         }
       ],
       "gridPos": {
@@ -111,32 +107,29 @@
       },
       "fieldConfig": {
         "defaults": {
-          "unit": "short"
+          "unit": "ops"
         },
         "overrides": []
       },
-      "options": {
-        "showHeader": true
-      }
+      "options": {}
     },
     {
       "id": 93,
-      "title": "Recent orders (SQL)",
-      "type": "table",
+      "title": "Blackbox duration (PromQL)",
+      "type": "timeseries",
       "datasource": {
-        "type": "postgres",
-        "uid": "postgres"
+        "type": "prometheus",
+        "uid": "prometheus"
       },
       "targets": [
         {
           "refId": "A",
           "datasource": {
-            "type": "postgres",
-            "uid": "postgres"
+            "type": "prometheus",
+            "uid": "prometheus"
           },
-          "rawSql": "SELECT created_at, id, product_id, quantity, amount_cents, status FROM orders ORDER BY created_at DESC LIMIT 20",
-          "format": "table",
-          "rawQuery": true
+          "expr": "probe_duration_seconds{job=\"blackbox\"}",
+          "legendFormat": "{{service_name}} {{result}} {{queue}} {{consumergroup}} {{job}}"
         }
       ],
       "gridPos": {
@@ -147,32 +140,29 @@
       },
       "fieldConfig": {
         "defaults": {
-          "unit": "short"
+          "unit": "s"
         },
         "overrides": []
       },
-      "options": {
-        "showHeader": true
-      }
+      "options": {}
     },
     {
       "id": 161,
-      "title": "Fulfillment time by order (SQL)",
-      "type": "table",
+      "title": "Loki lines received per second (PromQL)",
+      "type": "timeseries",
       "datasource": {
-        "type": "postgres",
-        "uid": "postgres"
+        "type": "prometheus",
+        "uid": "prometheus"
       },
       "targets": [
         {
           "refId": "A",
           "datasource": {
-            "type": "postgres",
-            "uid": "postgres"
+            "type": "prometheus",
+            "uid": "prometheus"
           },
-          "rawSql": "SELECT id, extract(epoch FROM fulfilled_at - created_at) AS fulfillment_seconds FROM orders WHERE fulfilled_at IS NOT NULL ORDER BY fulfilled_at DESC LIMIT 20",
-          "format": "table",
-          "rawQuery": true
+          "expr": "sum(rate(loki_distributor_lines_received_total[5m]))",
+          "legendFormat": "{{service_name}} {{result}} {{queue}} {{consumergroup}} {{job}}"
         }
       ],
       "gridPos": {
@@ -183,32 +173,29 @@
       },
       "fieldConfig": {
         "defaults": {
-          "unit": "short"
+          "unit": "ops"
         },
         "overrides": []
       },
-      "options": {
-        "showHeader": true
-      }
+      "options": {}
     },
     {
       "id": 173,
-      "title": "Outbox oldest pending age (SQL)",
-      "type": "table",
+      "title": "Tempo spans received per second (PromQL)",
+      "type": "timeseries",
       "datasource": {
-        "type": "postgres",
-        "uid": "postgres"
+        "type": "prometheus",
+        "uid": "prometheus"
       },
       "targets": [
         {
           "refId": "A",
           "datasource": {
-            "type": "postgres",
-            "uid": "postgres"
+            "type": "prometheus",
+            "uid": "prometheus"
           },
-          "rawSql": "SELECT COALESCE(extract(epoch FROM now() - min(created_at)), 0) AS seconds FROM outbox WHERE published_at IS NULL",
-          "format": "table",
-          "rawQuery": true
+          "expr": "sum(rate(tempo_distributor_spans_received_total[5m]))",
+          "legendFormat": "{{service_name}} {{result}} {{queue}} {{consumergroup}} {{job}}"
         }
       ],
       "gridPos": {
@@ -219,13 +206,11 @@
       },
       "fieldConfig": {
         "defaults": {
-          "unit": "short"
+          "unit": "ops"
         },
         "overrides": []
       },
-      "options": {
-        "showHeader": true
-      }
+      "options": {}
     }
   ]
 }

@@ -14,11 +14,11 @@ Run `python3 scripts/scenario.py fulfillment-backlog`. In **03 RabbitMQ Fulfillm
 
 ## 4. Demonstrate query choices (2 minutes)
 
-Prometheus stores operational time series. A PromQL expression such as `sum(rate(lab_orders_created_total[5m]))` shows order creation rate. PostgreSQL stores business records. SQL such as `SELECT status, count(*) FROM orders GROUP BY status` shows current persisted state. Loki uses LogQL for logs, and Tempo uses TraceQL or trace ID lookup. Grafana's data source determines the query language used by a panel.
+Prometheus stores operational time series. A PromQL expression such as `sum(rate(demo_orders_created_total[5m]))` shows order creation rate. PostgreSQL stores business records. SQL such as `SELECT status, count(*) FROM orders GROUP BY status` shows current persisted state. Loki uses LogQL for logs, and Tempo uses TraceQL or trace ID lookup. Grafana's data source determines the query language used by a panel.
 
 ## 5. Discuss production tradeoffs (2 minutes)
 
-- The lab uses single-node brokers and local volumes. Production would need durability, backups, access control, and high availability.
+- The demo uses single-node brokers and local volumes. Production would need durability, backups, access control, and high availability.
 - Kafka facts are retained and independently consumed; RabbitMQ handles work tasks and retries. Both are used intentionally, although a smaller real application could use one broker.
 - The outbox avoids losing events when an order commits but Kafka is unavailable. Acknowledgement gaps still allow duplicate delivery, so consumers must be idempotent.
 - Trace context is carried in message headers, while order IDs stay in logs and traces rather than high-cardinality metric labels.

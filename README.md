@@ -1,4 +1,4 @@
-# Local Observability Lab
+# Local Observability Demo
 
 A Docker Compose order system built from scratch to practice operating Grafana, Prometheus, Blackbox Exporter, OpenTelemetry Collector, Loki, Tempo, Kafka, RabbitMQ, and PostgreSQL. The default generated traffic creates real requests, events, tasks, metrics, logs, and traces. Five version-controlled Grafana dashboards include both **PromQL** operational panels and **SQL** order-data panels.
 
@@ -18,7 +18,7 @@ docker compose ps
 docker compose run --rm api python -m app.smoke
 ```
 
-Open [Grafana](http://localhost:3000) with `admin` / `admin`. The RabbitMQ management UI is at [localhost:15672](http://localhost:15672) with `lab` / `lab`. Prometheus is at [localhost:9090](http://localhost:9090), and the Order API docs are at [localhost:8000/docs](http://localhost:8000/docs). These credentials and HTTP ports are for local development only.
+Open [Grafana](http://localhost:3000) with `admin` / `admin`. The RabbitMQ management UI is at [localhost:15672](http://localhost:15672) with `demo` / `demo`. Prometheus is at [localhost:9090](http://localhost:9090), and the Order API docs are at [localhost:8000/docs](http://localhost:8000/docs). These credentials and HTTP ports are for local development only.
 
 The traffic generator creates about one order every three seconds. To change the rate, set `TRAFFIC_INTERVAL_SECONDS` before starting Compose. Stop without deleting data with `docker compose stop`. Restart with `docker compose up -d`. **Intentional full reset**, including orders and telemetry history: `docker compose down -v`.
 
@@ -69,4 +69,4 @@ The importer loads up to 500 product IDs, categories, and first observed prices.
 
 If a dashboard panel is empty, check the Prometheus targets page first, then inspect the corresponding service logs. PostgreSQL is exposed on host port **55432** because port 5432 is commonly in use locally. All other service connections use Compose names and their internal ports.
 
-This is a single-node local lab. It exercises failure symptoms and investigation paths, but it does not demonstrate high availability or production scale. Kubernetes deployment and cluster monitoring are reserved for a later addition.
+This is a single-node local demo. It exercises failure symptoms and investigation paths, but it does not demonstrate high availability or production scale. Kubernetes deployment and cluster monitoring are reserved for a later addition.

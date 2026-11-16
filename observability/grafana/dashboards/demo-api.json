@@ -1,5 +1,5 @@
 {
-  "uid": "lab-api",
+  "uid": "demo-api",
   "title": "01 Service and API Health",
   "description": "PromQL service and HTTP metrics",
   "schemaVersion": 41,
@@ -7,7 +7,7 @@
   "refresh": "10s",
   "timezone": "browser",
   "tags": [
-    "local-lab"
+    "local-demo"
   ],
   "time": {
     "from": "now-1h",
@@ -29,7 +29,7 @@
             "type": "prometheus",
             "uid": "prometheus"
           },
-          "expr": "sum(rate(lab_http_requests_total{route=\"/orders\"}[5m]))",
+          "expr": "sum(rate(demo_http_requests_total{route=\"/orders\"}[5m]))",
           "legendFormat": "{{service_name}} {{result}} {{queue}} {{consumergroup}} {{job}}"
         }
       ],
@@ -62,7 +62,7 @@
             "type": "prometheus",
             "uid": "prometheus"
           },
-          "expr": "sum(rate(lab_http_requests_total{route=\"/orders\",result!=\"created\"}[5m])) or vector(0)",
+          "expr": "sum(rate(demo_http_requests_total{route=\"/orders\",result!=\"created\"}[5m])) or vector(0)",
           "legendFormat": "{{service_name}} {{result}} {{queue}} {{consumergroup}} {{job}}"
         }
       ],
@@ -95,7 +95,7 @@
             "type": "prometheus",
             "uid": "prometheus"
           },
-          "expr": "histogram_quantile(0.95, sum by (le) (rate(lab_http_duration_seconds_bucket{route=\"/orders\"}[5m])))",
+          "expr": "histogram_quantile(0.95, sum by (le) (rate(demo_http_duration_seconds_bucket{route=\"/orders\"}[5m])))",
           "legendFormat": "{{service_name}} {{result}} {{queue}} {{consumergroup}} {{job}}"
         }
       ],

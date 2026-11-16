@@ -1,4 +1,4 @@
-"""Generate version-controlled Grafana dashboards for the local lab."""
+"""Generate version-controlled Grafana dashboards for the local demo."""
 import json
 from pathlib import Path
 
@@ -28,39 +28,39 @@ def panel(title, datasource, query, x, y, kind="timeseries", unit="short", width
 
 def dashboard(uid, title, description, panels):
     return {"uid": uid, "title": title, "description": description, "schemaVersion": 41,
-            "version": 1, "refresh": "10s", "timezone": "browser", "tags": ["local-lab"],
+            "version": 1, "refresh": "10s", "timezone": "browser", "tags": ["local-demo"],
             "time": {"from": "now-1h", "to": "now"}, "panels": panels}
 
 
 dashboards = [
-    dashboard("lab-api", "01 Service and API Health", "PromQL service and HTTP metrics", [
-        panel("Orders per second (PromQL)", "prometheus", "sum(rate(lab_http_requests_total{route=\"/orders\"}[5m]))", 0, 0, unit="reqps"),
-        panel("API errors per second (PromQL)", "prometheus", "sum(rate(lab_http_requests_total{route=\"/orders\",result!=\"created\"}[5m])) or vector(0)", 12, 0, unit="reqps"),
-        panel("p95 order API latency (PromQL)", "prometheus", "histogram_quantile(0.95, sum by (le) (rate(lab_http_duration_seconds_bucket{route=\"/orders\"}[5m])))", 0, 8, unit="s"),
+    dashboard("demo-api", "01 Service and API Health", "PromQL service and HTTP metrics", [
+        panel("Orders per second (PromQL)", "prometheus", "sum(rate(demo_http_requests_total{route=\"/orders\"}[5m]))", 0, 0, unit="reqps"),
+        panel("API errors per second (PromQL)", "prometheus", "sum(rate(demo_http_requests_total{route=\"/orders\",result!=\"created\"}[5m])) or vector(0)", 12, 0, unit="reqps"),
+        panel("p95 order API latency (PromQL)", "prometheus", "histogram_quantile(0.95, sum by (le) (rate(demo_http_duration_seconds_bucket{route=\"/orders\"}[5m])))", 0, 8, unit="s"),
         panel("API probe success (PromQL)", "prometheus", "probe_success{job=\"blackbox\"}", 12, 8),
         panel("Recent API logs (LogQL)", "loki", "{service_name=\"order-api\"}", 0, 16, kind="logs", width=24),
     ]),
-    dashboard("lab-orders", "02 Order Flow and SQL", "Compare Prometheus operations with PostgreSQL business records", [
-        panel("Orders created per second (PromQL)", "prometheus", "sum(rate(lab_orders_created_total[5m]))", 0, 0, unit="ops"),
+    dashboard("demo-orders", "02 Order Flow and SQL", "Compare Prometheus operations with PostgreSQL business records", [
+        panel("Orders created per second (PromQL)", "prometheus", "sum(rate(demo_orders_created_total[5m]))", 0, 0, unit="ops"),
         panel("Pending outbox events (SQL)", "postgres", "SELECT count(*) AS pending_events FROM outbox WHERE published_at IS NULL", 12, 0, kind="table"),
         panel("Orders by status (SQL)", "postgres", "SELECT status, count(*) AS orders FROM orders GROUP BY status ORDER BY status", 0, 8, kind="table"),
         panel("Recent orders (SQL)", "postgres", "SELECT created_at, id, product_id, quantity, amount_cents, status FROM orders ORDER BY created_at DESC LIMIT 20", 12, 8, kind="table"),
         panel("Fulfillment time by order (SQL)", "postgres", "SELECT id, extract(epoch FROM fulfilled_at - created_at) AS fulfillment_seconds FROM orders WHERE fulfilled_at IS NOT NULL ORDER BY fulfilled_at DESC LIMIT 20", 0, 16, kind="table"),
         panel("Outbox oldest pending age (SQL)", "postgres", "SELECT COALESCE(extract(epoch FROM now() - min(created_at)), 0) AS seconds FROM outbox WHERE published_at IS NULL", 12, 16, kind="table"),
     ]),
-    dashboard("lab-rabbit", "03 RabbitMQ Fulfillment", "Queue and worker health", [
+    dashboard("demo-rabbit", "03 RabbitMQ Fulfillment", "Queue and worker health", [
         panel("Ready tasks (PromQL)", "prometheus", "rabbitmq_queue_messages_ready{queue=~\"fulfillment.*\"}", 0, 0),
         panel("Unacknowledged tasks (PromQL)", "prometheus", "rabbitmq_queue_messages_unacked{queue=\"fulfillment\"}", 12, 0),
-        panel("Fulfilled orders per second (PromQL)", "prometheus", "sum(rate(lab_orders_fulfilled_total[5m]))", 0, 8, unit="ops"),
-        panel("Fulfillment failures per second (PromQL)", "prometheus", "sum(rate(lab_fulfillment_failures_total[5m])) or vector(0)", 12, 8, unit="ops"),
+        panel("Fulfilled orders per second (PromQL)", "prometheus", "sum(rate(demo_orders_fulfilled_total[5m]))", 0, 8, unit="ops"),
+        panel("Fulfillment failures per second (PromQL)", "prometheus", "sum(rate(demo_fulfillment_failures_total[5m])) or vector(0)", 12, 8, unit="ops"),
     ]),
-    dashboard("lab-kafka", "04 Kafka Events", "Topic progress and consumer lag", [
+    dashboard("demo-kafka", "04 Kafka Events", "Topic progress and consumer lag", [
         panel("Order topic offset (PromQL)", "prometheus", "sum(kafka_topic_partition_current_offset{topic=\"orders.placed\"})", 0, 0),
         panel("Consumer lag (PromQL)", "prometheus", "kafka_consumergroup_lag_sum{topic=\"orders.placed\"}", 12, 0),
-        panel("Outbox publish rate (PromQL)", "prometheus", "sum(rate(lab_outbox_published_total[5m]))", 0, 8, unit="ops"),
-        panel("Analytics consumption rate (PromQL)", "prometheus", "sum(rate(lab_analytics_orders_total[5m]))", 12, 8, unit="ops"),
+        panel("Outbox publish rate (PromQL)", "prometheus", "sum(rate(demo_outbox_published_total[5m]))", 0, 8, unit="ops"),
+        panel("Analytics consumption rate (PromQL)", "prometheus", "sum(rate(demo_analytics_orders_total[5m]))", 12, 8, unit="ops"),
     ]),
-    dashboard("lab-pipeline", "05 Telemetry Pipeline", "Scrape, probe, and backend availability", [
+    dashboard("demo-pipeline", "05 Telemetry Pipeline", "Scrape, probe, and backend availability", [
         panel("Prometheus target health (PromQL)", "prometheus", "up", 0, 0),
         panel("Collector accepted spans (PromQL)", "prometheus", "sum(rate(otelcol_receiver_accepted_spans_total[5m]))", 12, 0, unit="ops"),
         panel("Collector refused records (PromQL)", "prometheus", "(sum(rate(otelcol_receiver_refused_spans_total[5m])) or vector(0)) + (sum(rate(otelcol_receiver_refused_log_records_total[5m])) or vector(0))", 0, 8, unit="ops"),

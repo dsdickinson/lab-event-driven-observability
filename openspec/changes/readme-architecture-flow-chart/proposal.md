@@ -11,7 +11,7 @@ The README's text diagram names the main services but does not clearly show the 
 ## Capabilities
 
 ### New Capabilities
-- `readme-architecture-chart`: A complete visual overview of the local observability lab's process and telemetry flows.
+- `readme-architecture-chart`: A complete visual overview of the local observability demo's process and telemetry flows.
 
 ### Modified Capabilities
 
